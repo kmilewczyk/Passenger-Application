@@ -4,6 +4,7 @@ namespace Passenger.Infrastructure.Services;
 
 public interface IUserService
 {
-    void Register(string email, string username, string password);
-    User Get(string email);
+    Task Register(string email, string username, string password);
+    Task<User?> Get(string email);
+    Task<IEnumerable<User>> GetAll();
 }

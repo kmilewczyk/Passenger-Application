@@ -34,3 +34,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Add partial class to reference it in integration tests.
+public partial class Program { }

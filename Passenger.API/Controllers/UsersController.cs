@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic.CompilerServices;
 using Passenger.Infrastructure.Commands.Users;
@@ -17,13 +18,29 @@ public class UsersController : ControllerBase
     {
         _userService = userService;
     }
-    
+
     [HttpGet]
-    public User Get(string email) => _userService.Get(email);
+    public async Task<IActionResult> Get(string? email)
+    {
+        if (email is null)
+        {
+            return new JsonResult(await _userService.GetAll());
+        }
+        
+        var user = await _userService.Get(email);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return new JsonResult(user);
+    }
 
     [HttpPost]
-    public void Post([FromBody]CreateUser request)
+    public async Task<IActionResult> Post([FromBody] CreateUser request)
     {
-        _userService.Register(request.Email, request.Username, request.Password);
+        await _userService.Register(request.Email, request.Username, request.Password);
+        return Created($"api/users/{request.Email}", null);
     }
 }

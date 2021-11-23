@@ -10,14 +10,14 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
-    
+
     public UserService(IUserRepository userRepository, IMapper mapper)
     {
         _userRepository = userRepository;
         _mapper = mapper;
     }
-    
-    public void Register(string email, string username, string password)
+
+    public async Task Register(string email, string username, string password)
     {
         var user = _userRepository.Get(email).Result;
         if (user != null)
@@ -27,9 +27,12 @@ public class UserService : IUserService
 
         var salt = Guid.NewGuid().ToString(("N"));
         user = new Core.Domain.User(email, username, password, salt);
-        _userRepository.Add(user);
+        await _userRepository.Add(user);
     }
 
-    public User Get(string email)
-        => _mapper.Map<Core.Domain.User, User>(_userRepository.Get(email).Result!); // TODO: Add proper return codes instead
+    public async Task<User?> Get(string email)
+        => _mapper.Map<Core.Domain.User?, User?>(await _userRepository.Get(email));
+
+    public async Task<IEnumerable<User>> GetAll()
+        => (await _userRepository.GetAll()).Select(user => _mapper.Map<Core.Domain.User, User>(user)).ToList();
 }
