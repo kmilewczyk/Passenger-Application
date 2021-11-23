@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic.CompilerServices;
+using Passenger.Infrastructure.Commands.Users;
 using Passenger.Infrastructure.DTO;
 using Passenger.Infrastructure.Services;
 
@@ -18,5 +19,11 @@ public class UsersController : ControllerBase
     }
     
     [HttpGet]
-    public UserDto Get(string email) => _userService.Get(email);
+    public User Get(string email) => _userService.Get(email);
+
+    [HttpPost]
+    public void Post([FromBody]CreateUser request)
+    {
+        _userService.Register(request.Email, request.Username, request.Password);
+    }
 }

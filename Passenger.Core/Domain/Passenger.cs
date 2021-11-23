@@ -2,7 +2,11 @@
 
 public class Passenger
 {
-    public Guid Id { get; protected set; }
+    public Passenger(Guid userId)
+    {
+        UserId = userId;
+    }
+
     public Guid UserId { get; protected set; }
     public Node Address { get; protected set; }
 }

@@ -1,8 +1,3 @@
 ﻿namespace Passenger.Core.Domain;
 
-public class Vehicle
-{
-    public string Brand { get; protected set; }
-    public string Name { get; protected set; }
-    public int Seats { get; protected set; }
-}
+public record Vehicle(string Brand, string Name, int Seats);

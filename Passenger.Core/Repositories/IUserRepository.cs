@@ -4,10 +4,10 @@ namespace Passenger.Core.Repositories;
 
 public interface IUserRepository
 {
-    User Get(string email);
-    User Get(Guid id);
-    void Add(User user);
-    void Remove(Guid id);
-    void Update(User user);
-    IEnumerable<User> GetAll();
+    Task<User?> Get(string email);
+    Task<User?> Get(Guid id);
+    Task Add(User user);
+    Task Remove(Guid id);
+    Task Update(User user);
+    Task<IEnumerable<User>> GetAll();
 }
