@@ -3,4 +3,4 @@
 namespace Passenger.Infrastructure.DTO;
 
 [AutoMap(typeof(Core.Domain.Vehicle))]
-public record Vehicle(string Brand, string Name, int Seats);
+public record VehicleDto(string Brand, string Name, int Seats);

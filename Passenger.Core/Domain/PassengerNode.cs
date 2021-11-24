@@ -1,3 +1,13 @@
 ﻿namespace Passenger.Core.Domain;
 
-public record PassengerNode(Node node, Passenger Passenger);
+public class PassengerNode
+{
+    public Node Node { get; protected set; }
+    public Passenger Passenger { get; protected set; }
+
+    public PassengerNode(Node node, Passenger passenger)
+    {
+        Node = node;
+        Passenger = passenger;
+    }
+}

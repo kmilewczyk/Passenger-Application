@@ -1,6 +1,8 @@
 ﻿using System.Net.Mime;
 using Autofac;
+using Autofac.Core;
 using Passenger.Core.Repositories;
+using Passenger.Infrastructure.IoC;
 using Passenger.Infrastructure.IoC.Modules;
 using Passenger.Infrastructure.Mappers;
 using Passenger.Infrastructure.Repositories;
@@ -20,8 +22,6 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-        services.AddScoped<IUserRepository, InMemoryUserRepository>();
-        services.AddScoped<IUserService, UserService>();
 
         services.AddSingleton(AutoMapperConfig.Initialize());
 
@@ -31,7 +31,7 @@ public class Startup
 
     public void ConfigureContainer(ContainerBuilder builder)
     {
-        builder.RegisterModule<CommandModule>();
+        builder.RegisterModule(new ContainerModule(Configuration));
     }
 
     /// <summary>

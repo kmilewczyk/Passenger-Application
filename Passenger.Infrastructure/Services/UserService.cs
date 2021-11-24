@@ -2,7 +2,6 @@
 using Passenger.Core.Domain;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.DTO;
-using User = Passenger.Infrastructure.DTO.User;
 
 namespace Passenger.Infrastructure.Services;
 
@@ -30,9 +29,9 @@ public class UserService : IUserService
         await _userRepository.Add(user);
     }
 
-    public async Task<User?> Get(string email)
-        => _mapper.Map<Core.Domain.User?, User?>(await _userRepository.Get(email));
+    public async Task<UserDto?> Get(string email)
+        => _mapper.Map<Core.Domain.User?, UserDto?>(await _userRepository.Get(email));
 
-    public async Task<IEnumerable<User>> GetAll()
-        => (await _userRepository.GetAll()).Select(user => _mapper.Map<Core.Domain.User, User>(user)).ToList();
+    public async Task<IEnumerable<UserDto>> GetAll()
+        => (await _userRepository.GetAll()).Select(user => _mapper.Map<Core.Domain.User, UserDto>(user)).ToList();
 }

@@ -3,4 +3,4 @@
 namespace Passenger.Infrastructure.DTO;
 
 [AutoMap(typeof(Core.Domain.Node))]
-public record Node(string Address, double Longitude, double Latitude);
+public record NodeDto(string Address, double Longitude, double Latitude);

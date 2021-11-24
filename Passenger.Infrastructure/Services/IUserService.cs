@@ -2,9 +2,9 @@
 
 namespace Passenger.Infrastructure.Services;
 
-public interface IUserService
+public interface IUserService : IService
 {
     Task Register(string email, string username, string password);
-    Task<User?> Get(string email);
-    Task<IEnumerable<User>> GetAll();
+    Task<UserDto?> Get(string email);
+    Task<IEnumerable<UserDto>> GetAll();
 }

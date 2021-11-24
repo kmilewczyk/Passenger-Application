@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Passenger.Core.Domain;
 using Passenger.Infrastructure.DTO;
-using Driver = Passenger.Infrastructure.DTO.Driver;
-using User = Passenger.Infrastructure.DTO.User;
 
 namespace Passenger.Infrastructure.Mappers;
 

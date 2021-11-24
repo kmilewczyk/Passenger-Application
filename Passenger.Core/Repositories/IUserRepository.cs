@@ -2,7 +2,7 @@
 
 namespace Passenger.Core.Repositories;
 
-public interface IUserRepository
+public interface IUserRepository : IRepository
 {
     Task<User?> Get(string email);
     Task<User?> Get(Guid id);

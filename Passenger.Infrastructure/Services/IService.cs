@@ -1,5 +1,6 @@
 ﻿namespace Passenger.Infrastructure.Services;
 
-public interface IDriverService : IService
+// Marker interface
+public interface IService
 {
 }

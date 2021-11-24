@@ -21,11 +21,11 @@ public abstract class ControllerTestsBase : IClassFixture<WebApplicationFactory<
         _testOutputHelper = testOutputHelper;
     }
 
-    protected async Task<User> GetUser(string email)
+    protected async Task<UserDto> GetUser(string email)
     {
         var response = await Client.GetAsync($"api/users?email={email}");
 
-        return await response.Content.FromJson<User>(Options);
+        return await response.Content.FromJson<UserDto>(Options);
     }
 
     protected void WriteLine(string line)

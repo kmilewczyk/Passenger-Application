@@ -38,7 +38,7 @@ public class UserControllerTests : ControllerTestsBase
         var response = await Client.GetAsync($"api/users?email={email}");
         response.StatusCode.Should().Be(statusCode);
 
-        var user = await response.Content.FromJson<User>(Options);
+        var user = await response.Content.FromJson<UserDto>(Options);
 
         user!.Email.Should().Be(emailResponse);
     }
@@ -50,7 +50,7 @@ public class UserControllerTests : ControllerTestsBase
         var response = await Client.GetAsync($"api/users?email={email}");
         response.EnsureSuccessStatusCode();
 
-        var user = await response.Content.FromJson<User>(Options);
+        var user = await response.Content.FromJson<UserDto>(Options);
 
         user!.Email.Should().Be(email);
     }
@@ -61,8 +61,8 @@ public class UserControllerTests : ControllerTestsBase
         var response = await Client.GetAsync($"api/users");
         response.EnsureSuccessStatusCode();
 
-        var users = await response.Content.FromJson<List<User>>(Options);
-        users.Should().BeAssignableTo<IEnumerable<User>>();
+        var users = await response.Content.FromJson<List<UserDto>>(Options);
+        users.Should().BeAssignableTo<IEnumerable<UserDto>>();
     }
 
     [Fact]
