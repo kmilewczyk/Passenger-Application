@@ -23,16 +23,11 @@ using Xunit.Abstractions;
 
 namespace Passenger.Tests.EndToEnd.Controllers;
 
-public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
+public class UserControllerTests : ControllerTestsBase
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-    private readonly HttpClient _client;
-    private static readonly JsonSerializerOptions Options = new(){ PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
-    public UserControllerTests(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
+    public UserControllerTests(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper) 
+        : base(factory, testOutputHelper)
     {
-        _client = factory.CreateClient();
-        _testOutputHelper = testOutputHelper;
     }
 
     [Theory]
@@ -40,21 +35,19 @@ public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("admin1233@email.com", HttpStatusCode.NotFound, null)]
     public async Task GivenValidEmailTestResponse(string email, HttpStatusCode statusCode, string emailResponse)
     {
-
-        var response = await _client.GetAsync($"api/users?email={email}");
+        var response = await Client.GetAsync($"api/users?email={email}");
         response.StatusCode.Should().Be(statusCode);
 
         var user = await response.Content.FromJson<User>(Options);
 
         user!.Email.Should().Be(emailResponse);
     }
-    
+
     [Fact]
     public async Task GivenValidEmailUserShouldExist()
     {
-
         const string email = "user1@email.com";
-        var response = await _client.GetAsync($"api/users?email={email}");
+        var response = await Client.GetAsync($"api/users?email={email}");
         response.EnsureSuccessStatusCode();
 
         var user = await response.Content.FromJson<User>(Options);
@@ -65,7 +58,7 @@ public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task EmptyGetRequestShouldReturnArray()
     {
-        var response = await _client.GetAsync($"api/users");
+        var response = await Client.GetAsync($"api/users");
         response.EnsureSuccessStatusCode();
 
         var users = await response.Content.FromJson<List<User>>(Options);
@@ -75,27 +68,16 @@ public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task GivenUniqueEmailUserShouldBeCreated()
     {
-        var request = new CreateUser
-        {
-            Email = "test@email.com",
-            Username = "test",
-            Password = "secret"
-        };
+        var command = new CreateUser(Email: "test@email.com", Username: "test", Password: "secret");
 
-        var payload = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync("api/users", payload);
+        var payload = CreatePayload(command);
+        
+        var response = await Client.PostAsync("api/users", payload);
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         response.Headers.Location.Should().NotBeNull();
-        response.Headers.Location!.ToString().Should().Be($"api/users/{request.Email}");
+        response.Headers.Location!.ToString().Should().Be($"api/users/{command.Email}");
 
-        var user = await GetUser(request.Email);
-        user.Email.Should().Be(request.Email);
-    }
-
-    private async Task<User> GetUser(string email)
-    {
-        var response = await _client.GetAsync($"api/users?email={email}");
-
-        return await response.Content.FromJson<User>(Options);
+        var user = await GetUser(command.Email);
+        user.Email.Should().Be(command.Email);
     }
 }

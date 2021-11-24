@@ -1,35 +1,23 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Passenger.Api;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.Mappers;
 using Passenger.Infrastructure.Repositories;
 using Passenger.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var startup = new Startup(builder.Configuration);
 
-// Add services to the container.
+startup.ConfigureServices(builder.Services);
 
-builder.Services.AddControllers();
-builder.Services.AddScoped<IUserRepository, InMemoryUserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-
-builder.Services.AddSingleton(AutoMapperConfig.Initialize());
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+// Configure Autofac
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(startup.ConfigureContainer);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
+startup.Configure(app, app.Environment);
 
 app.MapControllers();
 
