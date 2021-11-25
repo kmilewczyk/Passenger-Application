@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic.CompilerServices;
 using Passenger.Infrastructure.Commands;
@@ -19,6 +20,7 @@ public class UsersController : ApiControllerBase
     }
     
     [HttpGet]
+    [Authorize(Policy = "admin")]
     public async Task<IActionResult> Get(string? email)
     {
         if (email is null)
@@ -26,7 +28,7 @@ public class UsersController : ApiControllerBase
             return new JsonResult(await _userService.GetAll());
         }
         
-        var user = await _userService.Get(email);
+        var user = await _userService.GetAsync(email);
 
         if (user == null)
         {

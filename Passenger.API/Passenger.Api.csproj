@@ -11,12 +11,29 @@
         <PackageReference Include="Autofac" Version="6.3.0" />
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
         <PackageReference Include="AutoMapper" Version="10.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
         <PackageReference Include="System.Text.Json" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Passenger.Infrastructure\Passenger.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Swagger\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Swagger\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Swagger\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Swagger\**" />
     </ItemGroup>
 
 </Project>

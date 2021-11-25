@@ -1,12 +1,18 @@
 ﻿using System.Net.Mime;
+using System.Text;
 using Autofac;
 using Autofac.Core;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Passenger.Core.Repositories;
+using Passenger.Infrastructure.Extensions;
 using Passenger.Infrastructure.IoC;
 using Passenger.Infrastructure.IoC.Modules;
 using Passenger.Infrastructure.Mappers;
 using Passenger.Infrastructure.Repositories;
 using Passenger.Infrastructure.Services;
+using Passenger.Infrastructure.Settings;
 
 namespace Passenger.Api;
 
@@ -25,8 +31,28 @@ public class Startup
 
         services.AddSingleton(AutoMapperConfig.Initialize());
 
+        services.AddAuthorization(x => x.AddPolicy("admin", p => p.RequireRole("admin")));
+        AddAuthentication(services, Configuration);
+
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+    }
+
+    private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
+    {
+        var jwtSettings = configuration.GetSettings<JwtSettings>();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidIssuer = jwtSettings.ValidIssuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.IssuerSigningKey)),
+                ValidateAudience = false,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                ValidateIssuer = true,
+            };
+        });
     }
 
     public void ConfigureContainer(ContainerBuilder builder)
@@ -53,10 +79,12 @@ public class Startup
         }
 
         app.UseHttpsRedirection();
-        app.UseAuthorization();
         app.UseStaticFiles();
-        app.UseRouting();
+        // app.UseRouting(); // It's not necessary per MS Docs. Also there is some conflict with UseAuthentication.
 
-        // app.UseEndpoints()
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        // app.UseEndpoints();
     }
 }
