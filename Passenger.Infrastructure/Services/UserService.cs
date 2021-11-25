@@ -18,9 +18,9 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task Register(string email, string username, string password)
+    public async Task RegisterAsync(Guid userId, string email, string username, string password, UserRole role)
     {
-        var user = _userRepository.Get(email).Result;
+        var user = _userRepository.GetAsync(email).Result;
         if (user != null)
         {
             throw new Exception($"User with email {email} already exists.");
@@ -28,28 +28,27 @@ public class UserService : IUserService
 
         var salt = _encrypter.GetSalt(password);
         var hash = _encrypter.GetHash(password, salt);
-        user = new Core.Domain.User(email, username, hash , salt);
+        user = new User(userId, email, username, hash , salt, role);
         
         await _userRepository.Add(user);
     }
 
     public async Task<UserDto?> GetAsync(string email)
-        => _mapper.Map<Core.Domain.User?, UserDto?>(await _userRepository.Get(email));
+        => _mapper.Map<User?, UserDto?>(await _userRepository.GetAsync(email));
 
     public async Task<IEnumerable<UserDto>> GetAll()
-        => (await _userRepository.GetAll()).Select(user => _mapper.Map<Core.Domain.User, UserDto>(user)).ToList();
+        => _mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(await _userRepository.BrowseAll());
 
     public async Task LoginAsync(string email, string password)
     {
-        var user = await _userRepository.Get(email);
+        var user = await _userRepository.GetAsync(email);
         if (user is null)
         {
             throw new Exception($"User with email '{email}' does not exist");
         }
         
         
-        var salt = _encrypter.GetSalt(password);
-        var hash = _encrypter.GetHash(password, salt);
+        var hash = _encrypter.GetHash(password, user.Salt);
         if (user.Password == hash)
         {
             return;

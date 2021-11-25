@@ -7,11 +7,16 @@ public class InMemoryDriverRepository : IDriverRepository
 {
     public static ISet<Driver> _drivers = new HashSet<Driver>();
 
-    public void Add(Driver driver) => _drivers.Add(driver);
+    public Task AddAsync(Driver driver)
+    {
+        _drivers.Add(driver);
+        
+        return Task.CompletedTask;
+    }
 
-    public Driver Get(Guid userId) => _drivers.Single(driver => driver.UserId == userId);
+    public Task<Driver?> GetAsync(Guid userId) => Task.FromResult(_drivers.SingleOrDefault(driver => driver.UserId == userId));
 
-    public IEnumerable<Driver> GetAll() => _drivers;
+    public Task<IEnumerable<Driver>> GetAllAsync() => Task.FromResult<IEnumerable<Driver>>(_drivers);
 
-    public void Update(Driver driver) => throw new NotImplementedException();
+    public Task UpdateAsync(Driver driver) => throw new NotImplementedException();
 }

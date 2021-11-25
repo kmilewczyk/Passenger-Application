@@ -1,4 +1,5 @@
-﻿using Passenger.Infrastructure.Commands;
+﻿using Passenger.Core.Domain;
+using Passenger.Infrastructure.Commands;
 using Passenger.Infrastructure.Commands.Users;
 using Passenger.Infrastructure.Services;
 
@@ -18,6 +19,6 @@ public class CreateUserHandler : ICommandHandler<CreateUser>
 
     public async Task HandleAsync(CreateUser command)
     {
-        await _userService.Register(command.Email, command.Username, command.Password);
+        await _userService.RegisterAsync(new Guid(), command.Email, command.Username, command.Password, UserRole.User);
     }
 }

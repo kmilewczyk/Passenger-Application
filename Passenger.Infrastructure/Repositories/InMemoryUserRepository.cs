@@ -5,17 +5,12 @@ namespace Passenger.Infrastructure.Repositories;
 
 public class InMemoryUserRepository : IUserRepository
 {
-    private static ISet<User> _users = new HashSet<User>()
-    {
-        new User("user1@email.com", "user1", "secret", "salt"),
-        new User("user2@email.com", "user2", "secret", "salt"),
-        new User("user3@email.com", "user3", "secret", "salt"),
-    };
+    private static ISet<User> _users = new HashSet<User>();
 
-    public Task<User?> Get(string email)
+    public Task<User?> GetAsync(string email)
         => Task.FromResult(_users.SingleOrDefault(x => string.Equals(x.Email, email, StringComparison.InvariantCultureIgnoreCase)));
 
-    public Task<User?> Get(Guid id)
+    public Task<User?> GetAsync(Guid id)
         => Task.FromResult(_users.SingleOrDefault(x => x.Id == id));
 
     public Task Add(User user)
@@ -26,7 +21,7 @@ public class InMemoryUserRepository : IUserRepository
 
     public Task Remove(Guid id)
     {
-        var user = Get(id).Result;
+        var user = GetAsync(id).Result;
         if (user is not null)
         {
             _users.Remove(user);
@@ -44,6 +39,6 @@ public class InMemoryUserRepository : IUserRepository
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<User>> GetAll()
+    public Task<IEnumerable<User>> BrowseAll()
         => Task.FromResult<IEnumerable<User>>(_users);
 }

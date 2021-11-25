@@ -24,5 +24,9 @@ public class ServiceModule : Autofac.Module
         builder.RegisterType<JwtHandler>()
             .As<IJwtHandler>()
             .SingleInstance();
+
+        builder.RegisterType<DataInitializer>()
+            .As<IDataInitializer>()
+            .SingleInstance();
     }
 }

@@ -29,6 +29,8 @@ public class Startup
     {
         services.AddControllers();
 
+        services.AddMemoryCache();
+
         services.AddSingleton(AutoMapperConfig.Initialize());
 
         services.AddAuthorization(x => x.AddPolicy("admin", p => p.RequireRole("admin")));
@@ -76,6 +78,12 @@ public class Startup
         {
             app.UseExceptionHandler("/Error");
             app.UseHsts();
+        }
+
+        var generalSettings = Configuration.GetSettings<GeneralSettings>();
+        if (generalSettings.SeedData)
+        {
+            app.ApplicationServices.GetService<IDataInitializer>()!.SeedAsync().Wait();
         }
 
         app.UseHttpsRedirection();

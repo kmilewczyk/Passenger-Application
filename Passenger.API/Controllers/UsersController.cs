@@ -20,7 +20,6 @@ public class UsersController : ApiControllerBase
     }
     
     [HttpGet]
-    [Authorize(Policy = "admin")]
     public async Task<IActionResult> Get(string? email)
     {
         if (email is null)

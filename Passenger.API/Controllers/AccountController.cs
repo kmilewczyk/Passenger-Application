@@ -15,13 +15,6 @@ public class AccountController : ApiControllerBase
         _jwtHandler = jwtHandler;
     }
 
-    [HttpGet]
-    [Route("token")]
-    public async Task<IActionResult> Get()
-    {
-        return new JsonResult(_jwtHandler.CreateToken("user1@email.com", "admin"));
-    }
-
     [HttpPut]
     [Route("password")]
     public async Task<IActionResult> Post([FromBody] ChangeUserPassword command)

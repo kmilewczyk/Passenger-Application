@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using Moq;
@@ -19,7 +20,7 @@ public class UserServiceTests
         var encrypterMock = new Mock<IEncrypter>();
 
         var userService = new UserService(userRepositoryMock.Object, encrypterMock.Object, mapperMock.Object);
-        await userService.Register("user@email.com", "user", "secret");
+        await userService.RegisterAsync(new Guid(), "user@email.com", "user", "secret", UserRole.User);
         
         userRepositoryMock.Verify(x => x.Add(It.IsAny<User>()), Times.Once);
     }
