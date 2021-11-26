@@ -4,6 +4,7 @@ using AutoMapper.Configuration.Conventions;
 using Passenger.Core.Domain;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.DTO;
+using Passenger.Infrastructure.Extensions;
 
 namespace Passenger.Infrastructure.Services;
 
@@ -24,12 +25,11 @@ class DriverService : IDriverService
     }
 
     public async Task<DriverDetailsDto?> GetAsync(Guid userId)
-        => _mapper.Map<Driver?, DriverDetailsDto?>(await _driverRepository.GetAsync(userId));
+        => _mapper.Map<DriverDetailsDto?>(await _driverRepository.GetAsync(userId));
 
     public async Task CreateAsync(Guid userId)
     {
-        var user = await _userRepository.GetAsync(userId) ??
-                   throw new Exception($"User with id {userId} was not found");
+        var user = await _userRepository.GetOrFailAsync(userId);
 
         var driver = await _driverRepository.GetAsync(userId);
         if (driver is not null)
@@ -43,8 +43,7 @@ class DriverService : IDriverService
 
     public async Task SetVehicle(Guid userId, string brand, string name)
     {
-        var driver = await _driverRepository.GetAsync(userId) ??
-                     throw new Exception("Driver with user id {userId} wasn't found");
+        var driver = await _driverRepository.GetOrFailAsync(userId);
 
         var vehicle = await _vehicleProvider.GetAsync(brand, name);
         driver.SetVehicle(new Vehicle(brand, name, vehicle.Seats));
@@ -53,6 +52,13 @@ class DriverService : IDriverService
     public async Task<IEnumerable<DriverDto>> BrowseAsync()
     {
         var drivers = await _driverRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<Driver>, IEnumerable<DriverDto>>(drivers);
+        return _mapper.Map<IEnumerable<DriverDto>>(drivers);
+    }
+
+    public async Task DeleteAsync(Guid userId)
+    {
+        var driver = await _driverRepository.GetOrFailAsync(userId);
+        await _driverRepository.DeleteAsync(driver);
+
     }
 }

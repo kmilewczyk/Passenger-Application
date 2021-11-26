@@ -37,7 +37,7 @@ public class Driver
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void AddRoute(string name, Node start, Node end)
+    public void AddRoute(string name, Node start, Node end, double distance)
     {
         var route = Routes.SingleOrDefault(x => x.Name == name);
         if (route is not null)
@@ -45,7 +45,12 @@ public class Driver
             throw new Exception($"Route with name: '{name}' already exists for driver: {name}.");
         }
 
-        _routes.Add(new Route(name, start, end));
+        if (distance < 0)
+        {
+            throw new Exception($"Route cannot have a negative distance");
+        }
+
+        _routes.Add(new Route(name, start, end, Distance: distance));
         UpdatedAt = DateTime.UtcNow;
     }
 }

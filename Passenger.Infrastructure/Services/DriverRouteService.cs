@@ -8,11 +8,13 @@ class DriverRouteService : IDriverRouteService
 {
     private readonly IDriverRepository _driverRepository;
     private readonly IMapper _mapper;
+    private readonly IRouteManager _routeManager;
 
-    public DriverRouteService(IDriverRepository driverRepository, IMapper mapper)
+    public DriverRouteService(IDriverRepository driverRepository, IMapper mapper, IRouteManager routeManager)
     {
         _driverRepository = driverRepository;
         _mapper = mapper;
+        _routeManager = routeManager;
     }
     
     public async Task AddAsync(Guid userId, string name, double startLatitude, double startLongitude, double endLatitude,
@@ -24,10 +26,14 @@ class DriverRouteService : IDriverRouteService
             throw new Exception($"Driver with user id: '{userId}' was not found");
         }
 
-        var start = new Node("Start address", startLongitude, startLatitude);
-        var end = new Node("End address", endLongitude, endLatitude);
+        var startAddress = await _routeManager.GetAddressAsync(startLatitude, startLongitude);
+        var endAddress = await _routeManager.GetAddressAsync(endLatitude, endLongitude);
+        var distance = _routeManager.CalculateDistance(startLatitude, startLongitude, endLatitude, endLongitude);
 
-        driver.AddRoute(name, start, end);
+        var startNode = new Node(startAddress, startLongitude, startLatitude);
+        var endNode = new Node(endAddress, endLongitude, endLatitude);
+
+        driver.AddRoute(name, startNode, endNode, distance);
         await _driverRepository.UpdateAsync(driver);
     }
 

@@ -34,10 +34,10 @@ public class UserService : IUserService
     }
 
     public async Task<UserDto?> GetAsync(string email)
-        => _mapper.Map<User?, UserDto?>(await _userRepository.GetAsync(email));
+        => _mapper.Map<UserDto?>(await _userRepository.GetAsync(email));
 
     public async Task<IEnumerable<UserDto>> GetAll()
-        => _mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(await _userRepository.BrowseAll());
+        => _mapper.Map<IEnumerable<UserDto>>(await _userRepository.BrowseAll());
 
     public async Task LoginAsync(string email, string password)
     {

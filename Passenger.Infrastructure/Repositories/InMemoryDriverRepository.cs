@@ -25,4 +25,10 @@ public class InMemoryDriverRepository : IDriverRepository
         
         return Task.CompletedTask;
     }
+
+    public Task DeleteAsync(Driver driver)
+    {
+        _drivers.Remove(driver);
+        return Task.CompletedTask;
+    }
 }

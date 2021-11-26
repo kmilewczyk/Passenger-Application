@@ -22,18 +22,22 @@
 
     <ItemGroup>
       <Compile Remove="Swagger\**" />
+      <Compile Remove="Framework\ExceptionHandlerMiddleware\**" />
     </ItemGroup>
 
     <ItemGroup>
       <EmbeddedResource Remove="Swagger\**" />
+      <EmbeddedResource Remove="Framework\ExceptionHandlerMiddleware\**" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Swagger\**" />
+      <None Remove="Framework\ExceptionHandlerMiddleware\**" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Remove="Swagger\**" />
+      <Content Remove="Framework\ExceptionHandlerMiddleware\**" />
     </ItemGroup>
 
 </Project>

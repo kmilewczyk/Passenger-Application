@@ -3,8 +3,11 @@ using System.Text;
 using Autofac;
 using Autofac.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Passenger.Api.Extensions;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.Extensions;
 using Passenger.Infrastructure.IoC;
@@ -76,7 +79,6 @@ public class Startup
         }
         else
         {
-            app.UseExceptionHandler("/Error");
             app.UseHsts();
         }
 
@@ -89,6 +91,7 @@ public class Startup
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         // app.UseRouting(); // It's not necessary per MS Docs. Also there is some conflict with UseAuthentication.
+        app.UseApiExceptionHandler();
 
         app.UseAuthentication();
         app.UseAuthorization();

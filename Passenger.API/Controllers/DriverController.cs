@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Passenger.Infrastructure.Commands;
 using Passenger.Infrastructure.Commands.Drivers;
 using Passenger.Infrastructure.DTO;
@@ -39,4 +40,21 @@ public class DriverController : ApiControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
         => new JsonResult(await _driverService.BrowseAsync());
+
+    [Authorize]
+    [HttpDelete("me")]
+    public async Task<IActionResult> Delete()
+    {
+        await DispatchAsync(new DeleteDriver());
+
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpPut("me")]
+    public async Task<IActionResult> Put([FromBody] UpdateDriver command)
+    {
+        await DispatchAsync(command);
+        return NoContent();
+    }
 }

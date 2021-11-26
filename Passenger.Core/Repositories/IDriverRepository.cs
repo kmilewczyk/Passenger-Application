@@ -8,4 +8,5 @@ public interface IDriverRepository : IRepository
     public Task<Driver?> GetAsync(Guid userId);
     public Task<IEnumerable<Driver>> GetAllAsync();
     public Task UpdateAsync(Driver driver);
+    Task DeleteAsync(Driver driver);
 }
