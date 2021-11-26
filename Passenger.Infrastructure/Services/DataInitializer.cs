@@ -8,14 +8,17 @@ public class DataInitializer : IDataInitializer
 {
     private readonly IDriverService _driverService;
     private readonly IUserService _userService;
+    private readonly IDriverRouteService _driverRouteService;
     private readonly ILogger<DataInitializer> _logger;
     private static readonly object InitializerInvokedLock = new object();
     private static bool InitializerInvoked { get; set; } = false;
 
-    public DataInitializer(IDriverService driverService, IUserService userService, ILogger<DataInitializer> logger)
+    public DataInitializer(IDriverService driverService, IUserService userService,
+        IDriverRouteService driverRouteService, ILogger<DataInitializer> logger)
     {
         _driverService = driverService;
         _userService = userService;
+        _driverRouteService = driverRouteService;
         _logger = logger;
     }
 
@@ -32,7 +35,7 @@ public class DataInitializer : IDataInitializer
 
             InitializerInvoked = true;
         }
-        
+
         _logger.LogTrace("Initializing data...");
 
         var tasks = new List<Task>();
@@ -40,15 +43,22 @@ public class DataInitializer : IDataInitializer
         {
             var userId = Guid.NewGuid();
             var username = $"user{i}";
+            _logger.LogTrace($"Adding user: {username}");
             tasks.Add(_userService.RegisterAsync(userId, $"{username}@email.com", username, "secret", UserRole.User));
+            _logger.LogTrace($"Adding driver for user {username}");
             tasks.Add(_driverService.CreateAsync(userId));
-            tasks.Add(_driverService.SetVehicle(userId, "BMW", "i8", 5));
+            tasks.Add(_driverService.SetVehicle(userId, "BMW", "i8"));
+            tasks.Add(_driverService.SetVehicle(userId, "BMW", "i8"));
+            _logger.LogTrace($"Adding route for: {username}");
+            tasks.Add(_driverRouteService.AddAsync(userId, "Default Route", 1, 1, 2, 2));
+            tasks.Add(_driverRouteService.AddAsync(userId, "Job Route", 3, 4, 7, 8));
         }
 
         for (int i = 1; i <= 3; i++)
         {
             var adminId = Guid.NewGuid();
             var username = $"admin{i}";
+            _logger.LogTrace($"Adding admin: {username}");
             tasks.Add(_userService.RegisterAsync(adminId, $"{username}@email.com", username, "secret", UserRole.Admin));
         }
 

@@ -2,7 +2,7 @@
 
 public class Node
 {
-    public Node(string address, string longitude, string latitude)
+    public Node(string address, double longitude, double latitude)
     {
         Address = address;
         Longitude = longitude;
@@ -10,6 +10,6 @@ public class Node
     }
 
     public string Address { get; protected set; }
-    public string Longitude { get; protected set; }
-    public string Latitude { get; protected set; }
+    public double Longitude { get; protected set; }
+    public double Latitude { get; protected set; }
 }

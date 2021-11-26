@@ -1,6 +1,9 @@
-﻿namespace Passenger.Infrastructure.Commands.Drivers;
+﻿using Passenger.Infrastructure.DTO;
 
-public sealed record CreateDriver(Guid UserId, CreateDriver.DriverVehicle Vehicle) : ICommand
+namespace Passenger.Infrastructure.Commands.Drivers;
+
+public class CreateDriver : AuthenticatedCommandBase
 {
-    public sealed record DriverVehicle(string Brand, string Name, int Seats);
+    public VehicleDto Vehicle { get; set; }
+    public sealed record DriverVehicle(string Brand, string Name);
 }

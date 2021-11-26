@@ -16,14 +16,15 @@ public class JwtHandler : IJwtHandler
         _settings = settings;
     }
 
-    public JwtDto CreateToken(string email, string role)
+    public JwtDto CreateToken(Guid userId, string role)
     {
         var now = DateTimeOffset.UtcNow;
         var expires = now.AddMinutes(_settings.ExpiryMinutes);
         
         var claims = new Claim[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, email),
+            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new Claim(JwtRegisteredClaimNames.UniqueName, userId.ToString()),
             new Claim(ClaimTypes.Role, role),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             // ASP.NET 4.6 added method ToUnixTimeSeconds, extension is unnecessary

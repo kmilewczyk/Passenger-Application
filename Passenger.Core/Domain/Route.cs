@@ -1,3 +1,3 @@
 ﻿namespace Passenger.Core.Domain;
 
-public record Route(Guid Id, Node StartNode, Node EndNode);
+public record Route(string Name, Node StartNode, Node EndNode);

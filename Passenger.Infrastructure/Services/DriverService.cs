@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using AutoMapper;
+using AutoMapper.Configuration.Conventions;
 using Passenger.Core.Domain;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.DTO;
@@ -10,18 +11,20 @@ class DriverService : IDriverService
 {
     private readonly IDriverRepository _driverRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IVehicleProvider _vehicleProvider;
     private readonly IMapper _mapper;
 
-    public DriverService(IDriverRepository driverRepository, IMapper mapper, IUserRepository userRepository)
+    public DriverService(IDriverRepository driverRepository, IMapper mapper, IUserRepository userRepository,
+        IVehicleProvider vehicleProvider)
     {
         _driverRepository = driverRepository;
         _mapper = mapper;
         _userRepository = userRepository;
+        _vehicleProvider = vehicleProvider;
     }
 
-    public async Task<DriverDto> GetAsync(Guid userId)
-        => _mapper.Map<Driver, DriverDto>(await _driverRepository.GetAsync(userId) ??
-                                          throw new InvalidOperationException());
+    public async Task<DriverDetailsDto?> GetAsync(Guid userId)
+        => _mapper.Map<Driver?, DriverDetailsDto?>(await _driverRepository.GetAsync(userId));
 
     public async Task CreateAsync(Guid userId)
     {
@@ -38,18 +41,18 @@ class DriverService : IDriverService
         await _driverRepository.AddAsync(driver);
     }
 
-    public async Task SetVehicle(Guid userId, string brand, string name, int seats)
+    public async Task SetVehicle(Guid userId, string brand, string name)
     {
         var driver = await _driverRepository.GetAsync(userId) ??
                      throw new Exception("Driver with user id {userId} wasn't found");
 
-        driver.SetVehicle(brand, name, seats);
+        var vehicle = await _vehicleProvider.GetAsync(brand, name);
+        driver.SetVehicle(new Vehicle(brand, name, vehicle.Seats));
     }
 
     public async Task<IEnumerable<DriverDto>> BrowseAsync()
     {
         var drivers = await _driverRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<Driver>, IEnumerable<DriverDto>>(drivers);
-
     }
 }

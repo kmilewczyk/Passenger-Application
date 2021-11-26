@@ -19,7 +19,7 @@ public class AccountController : ApiControllerBase
     [Route("password")]
     public async Task<IActionResult> Post([FromBody] ChangeUserPassword command)
     {
-        await CommandDispatcher.DispatchAsync(command);
+        await DispatchAsync(command);
 
         return NoContent();
     }

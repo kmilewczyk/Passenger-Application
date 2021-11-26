@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Passenger.Infrastructure.Commands;
 using Passenger.Infrastructure.Extensions;
+using Passenger.Infrastructure.Repositories;
 using Passenger.Infrastructure.Services;
 
 namespace Passenger.Infrastructure.Handlers.Users;
@@ -28,7 +29,7 @@ public class LoginHandler : ICommandHandler<Login>
             throw new Exception($"User with an '{command.Email}' doesn't exists.");
         }
         
-        var jwt = _jwtHandler.CreateToken(command.Email, user.Role);
+        var jwt = _jwtHandler.CreateToken((Guid) user.Id!, user.Role!);
         _cache.SetJwt(command.TokenId, jwt);
     }
 }

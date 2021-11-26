@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Passenger.Infrastructure.Commands;
 using Passenger.Infrastructure.Commands.Drivers;
 using Passenger.Infrastructure.DTO;
@@ -19,11 +18,24 @@ public class DriverController : ApiControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateDriver command)
     {
-        await CommandDispatcher.DispatchAsync(command);
+        await DispatchAsync(command);
         
         return Created($"api/drivers?userid={command.UserId}", null);
     }
 
+    [HttpGet]
+    [Route("{userId}")]
+    public async Task<IActionResult> Get(Guid userId)
+    {
+        var driver = await _driverService.GetAsync(userId);
+        if (driver is null)
+        {
+            return NotFound();
+        }
+
+        return new JsonResult(driver);
+    }
+    
     [HttpGet]
     public async Task<IActionResult> Get()
         => new JsonResult(await _driverService.BrowseAsync());

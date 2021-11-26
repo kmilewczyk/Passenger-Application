@@ -40,7 +40,7 @@ public class UsersController : ApiControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateUser command)
     {
-        await CommandDispatcher.DispatchAsync(command);
+        await DispatchAsync(command);
         
         return Created($"api/users/{command.Email}", null);
     }

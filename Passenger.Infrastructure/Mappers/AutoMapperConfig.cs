@@ -9,12 +9,11 @@ public static class AutoMapperConfig
     public static IMapper Initialize()
         => new MapperConfiguration(cfg =>
         {
-            Console.WriteLine(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name);
-            
             cfg.AddMaps(new []
             {
                 "Passenger.Infrastructure",
                 "Passenger.Core"
             });
+            cfg.CreateMap<Driver, DriverDetailsDto>();
         }).CreateMapper();
 }

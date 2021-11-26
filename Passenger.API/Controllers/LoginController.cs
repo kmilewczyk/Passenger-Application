@@ -20,7 +20,7 @@ public class LoginController : ApiControllerBase
     public async Task<IActionResult> Post([FromBody] LoginForm form)
     {
         Login command = new(new Guid(), form.Email, form.Password);
-        await CommandDispatcher.DispatchAsync(command);
+        await DispatchAsync(command);
         var jwt = _cache.GetJwt(command.TokenId);
 
         return new JsonResult(jwt);

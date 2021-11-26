@@ -18,5 +18,11 @@ public class InMemoryDriverRepository : IDriverRepository
 
     public Task<IEnumerable<Driver>> GetAllAsync() => Task.FromResult<IEnumerable<Driver>>(_drivers);
 
-    public Task UpdateAsync(Driver driver) => throw new NotImplementedException();
+    public Task UpdateAsync(Driver driver)
+    {
+        _drivers.Remove(driver);
+        _drivers.Add(driver);
+        
+        return Task.CompletedTask;
+    }
 }
