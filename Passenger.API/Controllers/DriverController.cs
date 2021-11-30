@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using Passenger.Infrastructure.Commands;
 using Passenger.Infrastructure.Commands.Drivers;
 using Passenger.Infrastructure.DTO;
@@ -9,6 +10,7 @@ namespace Passenger.Api.Controllers;
 
 public class DriverController : ApiControllerBase
 {
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private readonly IDriverService _driverService;
 
     public DriverController(IDriverService driverService, ICommandDispatcher commandDispatcher) : base(commandDispatcher)
@@ -39,7 +41,10 @@ public class DriverController : ApiControllerBase
     
     [HttpGet]
     public async Task<IActionResult> Get()
-        => new JsonResult(await _driverService.BrowseAsync());
+    {
+        Logger.Info("Fetching drivers.");
+        return new JsonResult(await _driverService.BrowseAsync());
+    }
 
     [Authorize]
     [HttpDelete("me")]

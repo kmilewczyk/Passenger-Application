@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog.Web;
 using Passenger.Api.Extensions;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.Extensions;
@@ -26,6 +27,13 @@ public class Startup
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
+    }
+
+    public void ConfigureLogging(ILoggingBuilder logging)
+    {
+        logging.ClearProviders();
+        logging.AddNLog("nlog.config");
+        logging.AddNLogWeb();
     }
 
     public void ConfigureServices(IServiceCollection services)
@@ -81,7 +89,7 @@ public class Startup
         {
             app.UseHsts();
         }
-
+        
         var generalSettings = Configuration.GetSettings<GeneralSettings>();
         if (generalSettings.SeedData)
         {
@@ -91,6 +99,7 @@ public class Startup
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         // app.UseRouting(); // It's not necessary per MS Docs. Also there is some conflict with UseAuthentication.
+        
         app.UseApiExceptionHandler();
 
         app.UseAuthentication();

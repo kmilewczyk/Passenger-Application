@@ -2,6 +2,8 @@
 using Passenger.Core.Domain;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.DTO;
+using Passenger.Infrastructure.Exceptions;
+using ErrorCodes = Passenger.Infrastructure.Exceptions.ErrorCodes;
 
 namespace Passenger.Infrastructure.Services;
 
@@ -23,7 +25,7 @@ public class UserService : IUserService
         var user = _userRepository.GetAsync(email).Result;
         if (user != null)
         {
-            throw new Exception($"User with email {email} already exists.");
+            throw new ServiceException(ErrorCodes.EmailInUse, $"User with email {email} already exists.");
         }
 
         var salt = _encrypter.GetSalt(password);
@@ -44,7 +46,7 @@ public class UserService : IUserService
         var user = await _userRepository.GetAsync(email);
         if (user is null)
         {
-            throw new Exception($"User with email '{email}' does not exist");
+            throw new ServiceException(ErrorCodes.InvalidCredentials, $"Invalid credentials");
         }
         
         
@@ -54,6 +56,6 @@ public class UserService : IUserService
             return;
         }
 
-        throw new Exception("Invalid credentials");
+        throw new ServiceException(ErrorCodes.InvalidCredentials, "Invalid credentials");
     }
 }

@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿
+using System.Net;
 using System.Text.Json;
+using Passenger.Infrastructure.Exceptions;
 
 namespace Passenger.Api.Framework;
 
@@ -35,7 +37,10 @@ public class ApiExceptionHandlerMiddleware
             case { } e when exceptionType == typeof(UnauthorizedAccessException):
                 statusCode = HttpStatusCode.Unauthorized;
                 break;
-            // TODO custom exception
+            case ServiceException e when exceptionType == typeof(ServiceException):
+                statusCode = HttpStatusCode.BadRequest;
+                errorCode = e.Code;
+                break;
             default:
                 statusCode = HttpStatusCode.InternalServerError;
                 break;

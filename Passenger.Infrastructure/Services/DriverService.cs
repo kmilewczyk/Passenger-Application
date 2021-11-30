@@ -4,7 +4,9 @@ using AutoMapper.Configuration.Conventions;
 using Passenger.Core.Domain;
 using Passenger.Core.Repositories;
 using Passenger.Infrastructure.DTO;
+using Passenger.Infrastructure.Exceptions;
 using Passenger.Infrastructure.Extensions;
+using ErrorCodes = Passenger.Infrastructure.Exceptions.ErrorCodes;
 
 namespace Passenger.Infrastructure.Services;
 
@@ -34,7 +36,7 @@ class DriverService : IDriverService
         var driver = await _driverRepository.GetAsync(userId);
         if (driver is not null)
         {
-            throw new Exception($"User {userId} already is a driver");
+            throw new ServiceException(ErrorCodes.DriverAlreadyExists, $"User {userId} already is a driver");
         }
 
         driver = new Driver(user);
