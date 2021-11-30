@@ -4,6 +4,7 @@ using Autofac;
 using Autofac.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -17,6 +18,7 @@ using Passenger.Infrastructure.Mappers;
 using Passenger.Infrastructure.Repositories;
 using Passenger.Infrastructure.Services;
 using Passenger.Infrastructure.Settings;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Passenger.Api;
 
@@ -48,7 +50,23 @@ public class Startup
         AddAuthentication(services, Configuration);
 
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        // services.AddSwaggerGen();
+        services.AddSwaggerGen(options =>
+        {
+            // Define authentication scheme
+            options.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme()
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "JWT Authorization header"
+            });
+
+            // Require Authentication only on methods requiring it.
+            options.OperationFilter<SecurityRequirementsOperationFilter>(true, "bearerAuth");
+        });
     }
 
     private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
@@ -59,7 +77,12 @@ public class Startup
             options.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidIssuer = jwtSettings.ValidIssuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.IssuerSigningKey)),
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(
+                        jwtSettings.IssuerSigningKey ??
+                        throw new InvalidOperationException("Issuer signing key is not set")
+                    )
+                ),
                 ValidateAudience = false,
                 ValidateIssuerSigningKey = true,
                 ValidateLifetime = true,
@@ -89,7 +112,7 @@ public class Startup
         {
             app.UseHsts();
         }
-        
+
         var generalSettings = Configuration.GetSettings<GeneralSettings>();
         if (generalSettings.SeedData)
         {
@@ -99,7 +122,7 @@ public class Startup
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         // app.UseRouting(); // It's not necessary per MS Docs. Also there is some conflict with UseAuthentication.
-        
+
         app.UseApiExceptionHandler();
 
         app.UseAuthentication();

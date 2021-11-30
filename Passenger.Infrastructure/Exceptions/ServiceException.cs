@@ -4,8 +4,6 @@ namespace Passenger.Infrastructure.Exceptions;
 
 public class ServiceException : PassengerException
 {
-    public string Code { get; init; }
-
     protected ServiceException()
     {
     }

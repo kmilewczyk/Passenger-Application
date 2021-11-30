@@ -20,7 +20,7 @@ public class JwtHandler : IJwtHandler
     {
         var now = DateTimeOffset.UtcNow;
         var expires = now.AddMinutes(_settings.ExpiryMinutes);
-        
+
         var claims = new Claim[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
@@ -32,7 +32,11 @@ public class JwtHandler : IJwtHandler
                 ClaimValueTypes.Integer64),
         };
 
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.IssuerSigningKey)),
+        var signingCredentials = new SigningCredentials(
+            new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_settings.IssuerSigningKey ??
+                                       throw new InvalidOperationException("IssuerSigningKey is not set"))
+            ),
             SecurityAlgorithms.HmacSha256);
 
         var jwt = new JwtSecurityToken(

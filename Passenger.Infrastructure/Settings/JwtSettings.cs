@@ -2,7 +2,7 @@
 
 public class JwtSettings
 {
-    public string ValidIssuer { get; set; }
-    public string IssuerSigningKey { get; set; }
+    public string? ValidIssuer { get; set; }
+    public string? IssuerSigningKey { get; set; }
     public int ExpiryMinutes { get; set; }
 }
