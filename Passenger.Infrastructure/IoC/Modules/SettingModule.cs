@@ -3,6 +3,7 @@ using Autofac;
 using Microsoft.Extensions.Configuration;
 using Passenger.Infrastructure.Commands;
 using Passenger.Infrastructure.Extensions;
+using Passenger.Infrastructure.Mongo;
 using Passenger.Infrastructure.Settings;
 
 namespace Passenger.Infrastructure.IoC.Modules;
@@ -20,5 +21,6 @@ public class SettingModule : Autofac.Module
     {
         builder.RegisterInstance(_configuration.GetSettings<GeneralSettings>()).SingleInstance();
         builder.RegisterInstance(_configuration.GetSettings<JwtSettings>()).SingleInstance();
+        builder.RegisterInstance(_configuration.GetSettings<MongoSettings>()).SingleInstance();
     }
 }

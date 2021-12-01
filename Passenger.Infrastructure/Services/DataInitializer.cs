@@ -36,6 +36,12 @@ public class DataInitializer : IDataInitializer
             InitializerInvoked = true;
         }
 
+        var users = await _userService.GetAll();
+        if (users.Any())
+        {
+            return;
+        }
+
         _logger.LogTrace("Initializing data...");
 
         var tasks = new List<Task>();
@@ -43,15 +49,17 @@ public class DataInitializer : IDataInitializer
         {
             var userId = Guid.NewGuid();
             var username = $"user{i}";
+            
             _logger.LogTrace($"Adding user: {username}");
-            tasks.Add(_userService.RegisterAsync(userId, $"{username}@email.com", username, "secret", UserRole.User));
+            await _userService.RegisterAsync(userId, $"{username}@email.com", username, "secret", UserRole.User);
+            
             _logger.LogTrace($"Adding driver for user {username}");
-            tasks.Add(_driverService.CreateAsync(userId));
-            tasks.Add(_driverService.SetVehicle(userId, "BMW", "i8"));
-            tasks.Add(_driverService.SetVehicle(userId, "BMW", "i8"));
+            await _driverService.CreateAsync(userId);
+            await _driverService.SetVehicle(userId, "BMW", "i8");
+            
             _logger.LogTrace($"Adding route for: {username}");
-            tasks.Add(_driverRouteService.AddAsync(userId, "Default Route", 1, 1, 2, 2));
-            tasks.Add(_driverRouteService.AddAsync(userId, "Job Route", 3, 4, 7, 8));
+            await _driverRouteService.AddAsync(userId, "Default Route", 1, 1, 2, 2);
+            await _driverRouteService.AddAsync(userId, "Job Route", 3, 4, 7, 8);
         }
 
         for (int i = 1; i <= 3; i++)

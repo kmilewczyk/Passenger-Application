@@ -15,6 +15,7 @@ using Passenger.Infrastructure.Extensions;
 using Passenger.Infrastructure.IoC;
 using Passenger.Infrastructure.IoC.Modules;
 using Passenger.Infrastructure.Mappers;
+using Passenger.Infrastructure.Mongo;
 using Passenger.Infrastructure.Repositories;
 using Passenger.Infrastructure.Services;
 using Passenger.Infrastructure.Settings;
@@ -118,6 +119,8 @@ public class Startup
         {
             app.ApplicationServices.GetService<IDataInitializer>()!.SeedAsync().Wait();
         }
+        
+        MongoConfigurator.Initialize();
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();

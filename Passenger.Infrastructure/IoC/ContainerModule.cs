@@ -19,6 +19,8 @@ public class ContainerModule : Autofac.Module
         builder.RegisterModule<CommandModule>();
         builder.RegisterModule(new SettingModule(_configuration));
         builder.RegisterModule<RepositoryModule>();
+        // Overwrites RepositoryModule
+        builder.RegisterModule<MongoModule>();
         builder.RegisterModule<ServiceModule>();
     }
 }
