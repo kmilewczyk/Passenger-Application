@@ -21,6 +21,8 @@ public class ContainerModule : Autofac.Module
         builder.RegisterModule<RepositoryModule>();
         // Overwrites RepositoryModule
         builder.RegisterModule<MongoModule>();
+        // Overwrites MongoModule
+        builder.RegisterModule<SqlModule>();
         builder.RegisterModule<ServiceModule>();
     }
 }

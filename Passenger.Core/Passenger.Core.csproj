@@ -11,4 +11,20 @@
       <PackageReference Include="System.Text.Json" Version="6.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Extensions\**" />
+      <Compile Remove="Conversions.cs" />
+      <Compile Remove="Conversions\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Extensions\**" />
+      <EmbeddedResource Remove="Conversions\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Extensions\**" />
+      <None Remove="Conversions\**" />
+    </ItemGroup>
+
 </Project>

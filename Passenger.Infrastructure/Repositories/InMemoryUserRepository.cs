@@ -8,7 +8,8 @@ public class InMemoryUserRepository : IUserRepository
     private static ISet<User> _users = new HashSet<User>();
 
     public Task<User?> GetAsync(string email)
-        => Task.FromResult(_users.SingleOrDefault(x => string.Equals(x.Email, email, StringComparison.InvariantCultureIgnoreCase)));
+        => Task.FromResult(_users.SingleOrDefault(x
+            => string.Equals(x.Email, email, StringComparison.InvariantCultureIgnoreCase)));
 
     public Task<User?> GetAsync(Guid id)
         => Task.FromResult(_users.SingleOrDefault(x => x.Id == id));

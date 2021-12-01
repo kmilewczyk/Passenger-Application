@@ -71,10 +71,11 @@ public class User
 
     public string Salt { get; protected set; }
 
-    public string Fullname { get; protected set; }
+    public string? Fullname { get; protected set; }
     public UserRole Role { get; protected set; }
 
     public DateTime CreatedAt { get; protected set; }
+    public DateTime UpdatedAt { get; protected set;  }
 
     private User(UserRole role)
     {
@@ -90,5 +91,6 @@ public class User
         Salt = salt;
         Role = role;
         CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.Now;
     }
 }

@@ -67,7 +67,7 @@ public class DataInitializer : IDataInitializer
             var adminId = Guid.NewGuid();
             var username = $"admin{i}";
             _logger.LogTrace($"Adding admin: {username}");
-            tasks.Add(_userService.RegisterAsync(adminId, $"{username}@email.com", username, "secret", UserRole.Admin));
+            await _userService.RegisterAsync(adminId, $"{username}@email.com", username, "secret", UserRole.Admin);
         }
 
         await Task.WhenAll(tasks);

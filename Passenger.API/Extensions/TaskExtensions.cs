@@ -2,7 +2,7 @@
 
 namespace Passenger.Api.Extensions;
 
-public static class TaskExtensionis
+public static class TaskExtensions
 {
     // Just the testing the idea
     public static async Task<IActionResult> Return(this Task task, StatusCodeResult result)
